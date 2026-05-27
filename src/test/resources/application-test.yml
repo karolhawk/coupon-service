@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:coupons;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: none   # Flyway owns the schema; H2 type names differ from Postgres so skip Hibernate validation
+  flyway:
+    locations: classpath:db/migration/h2   # H2-compatible DDL (TIMESTAMP WITH TIME ZONE instead of TIMESTAMPTZ)
+
+coupon:
+  geolocation:
+    provider: static
+    base-url: http://unused
+    timeout-ms: 1000
+    fallback-country: PL
+
+logging:
+  level:
+    com.empik.coupon: DEBUG

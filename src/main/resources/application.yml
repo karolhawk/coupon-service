@@ -1,0 +1,73 @@
+spring:
+  application:
+    name: coupon-service
+
+  security:
+    user:
+      name: ${ADMIN_USERNAME:admin}
+      password: ${ADMIN_PASSWORD:admin}
+      roles: ADMIN
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/coupons}
+    username: ${DB_USERNAME:coupons}
+    password: ${DB_PASSWORD:coupons}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 10000
+      max-lifetime: 1800000
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        format_sql: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: never
+  forward-headers-strategy: framework  # respect X-Forwarded-For behind a proxy
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+
+coupon:
+  code:
+    min-length: 3
+    max-length: 32
+  geolocation:
+    provider: ip-api          # ip-api | static (used for tests)
+    base-url: http://ip-api.com
+    timeout-ms: 2000
+    # When the user's IP cannot be resolved (e.g. localhost in dev),
+    # fall back to this country code. Set to empty in production.
+    fallback-country: ${COUPON_FALLBACK_COUNTRY:}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+
+logging:
+  level:
+    com.empik.coupon: INFO
+    org.hibernate.SQL: WARN
